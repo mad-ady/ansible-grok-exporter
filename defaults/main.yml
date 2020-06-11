@@ -1,6 +1,7 @@
 ---
 grok_exporter_version: 0.2.5
 
+grok_exporter_create_user: true
 grok_exporter_system_group: "grok_exporter"
 grok_exporter_system_user: "{{ grok_exporter_system_group }}"
 

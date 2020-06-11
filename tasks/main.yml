@@ -1,12 +1,14 @@
 ---
 
 - name: Create the grok_exporter group
+  when: {{ grok_exporter_create_user }}
   group:
     name: "{{ grok_exporter_system_group }}"
     state: present
     system: true
 
 - name: Create the grok_exporter user
+  when: {{ grok_exporter_create_user }}
   user:
     name: "{{ grok_exporter_system_user }}"
     group: "{{ grok_exporter_system_group }}"
