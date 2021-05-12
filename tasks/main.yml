@@ -50,7 +50,6 @@
     creates: "{{ prometheus_exporters_common_root_dir }}/grok_exporter/grok_exporter-{{ grok_exporter_version }}.linux-amd64"
     owner: "{{ grok_exporter_system_user }}"
     group: "{{ grok_exporter_system_group }}"
-    remote_src: yes
   notify: 
     - restart grok_exporters via systemd
     - restart grok_exporters via sysv
