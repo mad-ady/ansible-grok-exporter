@@ -14,7 +14,7 @@
   with_items: "{{ grok_services }}"
   when: service_mgr | default(ansible_service_mgr) == 'systemd'
 
-- name: restart grok_exporter via sysv
+- name: restart grok_exporters via sysv
   become: true
   service:
     name: "grok_exporter"
