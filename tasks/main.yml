@@ -31,21 +31,36 @@
   check_mode: false
   run_once: true
 
+- name: create grok_exporter directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ grok_exporter_system_user }}"
+    group: "{{ grok_exporter_system_group }}"
+    mode: 0755
+  with_items:
+    - "{{ prometheus_exporters_common_root_dir }}"
+    - "{{ prometheus_exporters_common_dist_dir }}/grok_exporter"
+
+
 - name: Propagate grok_exporter to the machine we want it installed into
   unarchive:
     src: "/tmp/grok_exporter-{{ grok_exporter_version }}.linux-amd64.zip"
-    dest: "/etc"
-    creates: "/etc/grok_exporter-{{ grok_exporter_version }}.linux-amd64"
+    dest: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter"
+    creates: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/grok_exporter-{{ grok_exporter_version }}.linux-amd64"
     owner: "{{ grok_exporter_system_user }}"
     group: "{{ grok_exporter_system_group }}"
-  notify: restart grok_exporters
+    remote_src: yes
+  notify: 
+    - restart grok_exporters via systemd
+    - restart grok_exporters via sysv
   when: not ansible_check_mode
 
-- name: Move /etc/grok_exporter-{{ grok_exporter_version }}.linux-amd64 to /etc/grok_exporter
+- name: Rename grok_exporter-{{ grok_exporter_version }}.linux-amd64 to grok_exporter
   shell: "mv grok_exporter-{{ grok_exporter_version }}.linux-amd64/* grok_exporter && touch grok_exporter_copied_{{ grok_exporter_version }}"
   args:
-    chdir: /etc
-    creates: "/etc/grok_exporter_copied_{{ grok_exporter_version }}"
+    chdir: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/"
+    creates: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/grok_exporter_copied_{{ grok_exporter_version }}"
 
 - name: Copy the Grok Exporter systemd service file
   template:
@@ -54,10 +69,20 @@
     owner: root
     group: root
     mode: 0644
+  when: service_mgr | default(ansible_service_mgr) == 'systemd'
   notify: reload systemd for grok_exporters
 
 - name: If a new service was added SystemD needs to know about it
   meta: flush_handlers
+  when: service_mgr | default(ansible_service_mgr) == 'systemd'
+
+- name: Copy the grok_exporter sysv startup script
+  template:
+    src: grok_exporter.j2
+    dest: /etc/init.d/grok-exporter
+    owner: root
+    group: root
+    mode: 0755 
 
 - name: Copy the Grok Exporter config file
   template:
@@ -69,9 +94,17 @@
   notify: restart grok_exporters
   with_items: "{{ grok_services }}"
 
-- name: Make sure all grok_exporter*.service run at astartup
+- name: Make sure all grok_exporter*.service run at startup
   systemd:
     name: "grok_exporter@{{ item.name }}.service"
     enabled: yes
     state: started
   with_items: "{{ grok_services }}"
+  when: service_mgr | default(ansible_service_mgr) == 'systemd'
+
+- name: Make sure grok_exporter runs at startup
+  service:
+    name: "grok-exporter"
+    enabled: yes
+    state: started
+  when: service_mgr | default(ansible_service_mgr) in [ 'sysvinit', 'service' ]

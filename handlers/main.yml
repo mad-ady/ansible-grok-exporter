@@ -4,10 +4,19 @@
   become: true
   systemd:
     daemon_reload: true
+  when: service_mgr | default(ansible_service_mgr) == 'systemd'
 
-- name: restart grok_exporters
+- name: restart grok_exporters via systemd
   become: true
   systemd:
     name: "grok_exporter@{{ item.name }}.service"
     state: restarted
   with_items: "{{ grok_services }}"
+  when: service_mgr | default(ansible_service_mgr) == 'systemd'
+
+- name: restart grok_exporter via sysv
+  become: true
+  service:
+    name: "grok_exporter"
+    state: restarted
+  when: service_mgr | default(ansible_service_mgr) in [ 'sysvinit', 'service' ]
