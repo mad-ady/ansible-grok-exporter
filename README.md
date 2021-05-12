@@ -15,6 +15,7 @@ Role Variables
 
 - grok_exporter_system_group - save & run the executable under this group, defaults to `grok_exporter`
 - grok_exporter_system_user - save & run the executable under this group, defaults to the name of the group `grok_exporter_system_group`
+- prometheus_exporters_common_root_dir - path where to install the binary. Defaults to `/opt/prometheus/exporters`
 
 - grok_services - For each log that you want to process you must define a service, a config file will be generated and a systemd service will be activated for each one. See defaults/main.yml for a detailed example of a service.
 
@@ -27,10 +28,10 @@ Add it to your playbook
 
 - hosts: servers
   roles:
-    - role: eRadical.grok-exporter
+    - role: ansible-grok-exporter
 
 Example of services:
-
+```
 grok_services:
   - name: php-fpm-metrics-game-app
     config_version: 2
@@ -55,9 +56,10 @@ grok_services:
     server:
       host: "{{ ansible_eth0.ipv4.address }}"
       port: 9144
+```
 
 License
 -------
 
 - GPLv3
-- insipred by on https://github.com/eRadical/ansible-php-fpm-exporter
+- Forked from https://github.com/eRadical/ansible-php-fpm-exporter
