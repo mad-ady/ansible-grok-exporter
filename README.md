@@ -1,7 +1,7 @@
 grok-exporter
 =========
 
-Installs with Ansible Grok exporter for Prometheus from https://github.com/fstab/grok_exporter
+Installs with Ansible Grok exporter for Prometheus from https://github.com/fstab/grok_exporter. This fork supports both systemd and sysvinit.
 
 Requirments
 --------------
@@ -25,10 +25,11 @@ Example Playbook
 ----------------
 
 Add it to your playbook
-
+```
 - hosts: servers
   roles:
     - role: ansible-grok-exporter
+```
 
 Example of services:
 ```

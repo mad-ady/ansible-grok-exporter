@@ -40,7 +40,7 @@
     mode: 0755
   with_items:
     - "{{ prometheus_exporters_common_root_dir }}"
-    - "{{ prometheus_exporters_common_dist_dir }}/grok_exporter"
+    - "{{ prometheus_exporters_common_root_dir }}/grok_exporter"
 
 
 - name: Propagate grok_exporter to the machine we want it installed into
