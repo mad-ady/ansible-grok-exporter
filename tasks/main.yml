@@ -46,8 +46,8 @@
 - name: Propagate grok_exporter to the machine we want it installed into
   unarchive:
     src: "/tmp/grok_exporter-{{ grok_exporter_version }}.linux-amd64.zip"
-    dest: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter"
-    creates: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/grok_exporter-{{ grok_exporter_version }}.linux-amd64"
+    dest: "{{ prometheus_exporters_common_root_dir }}/grok_exporter"
+    creates: "{{ prometheus_exporters_common_root_dir }}/grok_exporter/grok_exporter-{{ grok_exporter_version }}.linux-amd64"
     owner: "{{ grok_exporter_system_user }}"
     group: "{{ grok_exporter_system_group }}"
     remote_src: yes
@@ -59,8 +59,8 @@
 - name: Rename grok_exporter-{{ grok_exporter_version }}.linux-amd64 to grok_exporter
   shell: "mv grok_exporter-{{ grok_exporter_version }}.linux-amd64/* grok_exporter && touch grok_exporter_copied_{{ grok_exporter_version }}"
   args:
-    chdir: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/"
-    creates: "{{ prometheus_exporters_common_dist_dir }}/grok_exporter/grok_exporter_copied_{{ grok_exporter_version }}"
+    chdir: "{{ prometheus_exporters_common_root_dir }}/grok_exporter/"
+    creates: "{{ prometheus_exporters_common_root_dir }}/grok_exporter/grok_exporter_copied_{{ grok_exporter_version }}"
 
 - name: Copy the Grok Exporter systemd service file
   template:
