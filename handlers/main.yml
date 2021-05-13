@@ -17,6 +17,7 @@
 - name: restart grok_exporters via sysv
   become: true
   service:
-    name: "grok_exporter"
+    name: "grok-exporter_{{item.name}}"
     state: restarted
+  with_items: "{{ grok_services }}"
   when: service_mgr | default(ansible_service_mgr) in [ 'sysvinit', 'service' ]

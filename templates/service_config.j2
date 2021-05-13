@@ -5,7 +5,7 @@ input:
     {{ item.input | to_nice_yaml(indent=4) | indent(4, False) }}
 
 grok:
-    patterns_dir: "/etc/grok_exporter/patterns"
+    patterns_dir: "{{prometheus_exporters_common_root_dir}}/grok_exporter/patterns"
     additional_patterns: {{ item.additional_patterns | to_yaml }}
 
 metrics:
