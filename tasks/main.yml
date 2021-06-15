@@ -13,10 +13,14 @@
     name: "{{ grok_exporter_system_user }}"
     group: "{{ grok_exporter_system_group }}"
     append: true
-    shell: /usr/sbin/nologin
+    shell: /sbin/nologin
     system: true
-    createhome: true
-    home: /etc/grok_exporter
+    createhome: no
+- name: Create /etc/grok_exporter
+  file:
+    path: /etc/grok_exporter
+    state: directory
+    mode: '0755'
 
 - name: Download grok_exporter archive
   become: false
