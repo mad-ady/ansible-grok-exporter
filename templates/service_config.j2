@@ -13,4 +13,4 @@ metrics:
 
 server:
   host: {{ item.server.host | default(ansible_default_ipv4.address) }}
-  port: 9144
+  port: {{ item.server.port | default('9144') }}
